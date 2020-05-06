@@ -1,0 +1,50 @@
+{
+    "objects": [
+      {
+        "directoryPath": "s3://{REPLACE_BUCKET_NAME_AND_PATH_FOR_OUTPUT}",
+        "name": "SourceS3",
+        "id": "S3DataNodeId_Gzwrh",
+        "type": "S3DataNode"
+      },
+      {
+        "failureAndRerunMode": "CASCADE",
+        "resourceRole": "DataPipelineDefaultResourceRole",
+        "role": "DataPipelineDefaultRole",
+        "pipelineLogUri": "s3://{REPLACE_BUCKET_NAME_AND_PATH_FOR_LOGS}",
+        "scheduleType": "ONDEMAND",
+        "name": "Default",
+        "id": "Default"
+      },
+      {
+        "output": {
+          "ref": "DynamoDBDataNodeId_HcXTd"
+        },
+        "input": {
+          "ref": "S3DataNodeId_Gzwrh"
+        },
+        "stage": "false",
+        "name": "DefaultHiveActivity1",
+        "hiveScript": "DROP TABLE IF EXISTS tempHiveTable;\n\nDROP TABLE IF EXISTS s3TempTable;\n\nCREATE EXTERNAL TABLE tempHiveTable (id string,name string,department string)\nSTORED BY 'org.apache.hadoop.hive.dynamodb.DynamoDBStorageHandler' \nTBLPROPERTIES (\"dynamodb.table.name\" = \"{REPLACE_DYNAMO_TABLE}\", \"dynamodb.column.mapping\" = \"id:id,name:name,department:department\");\n                    \nCREATE EXTERNAL TABLE s3TempTable (id string,name string,department string)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\\\n' LOCATION 's3://{REPLACE_BUCKET_NAME_AND_PATH_FOR_OUTPUT}/';\n                    \nINSERT OVERWRITE TABLE tempHiveTable SELECT * FROM s3TempTable;",
+        "runsOn": {
+          "ref": "EmrClusterId_STeGP"
+        },
+        "id": "HiveActivityId_NEFZs",
+        "type": "HiveActivity"
+      },
+      {
+        "name": "TargetDynamoTable",
+        "id": "DynamoDBDataNodeId_HcXTd",
+        "type": "DynamoDBDataNode",
+        "tableName": "{REPLACE_DYNAMO_TABLE}"
+      },
+      {
+        "name": "DefaultEmrCluster1",
+        "coreInstanceType": "m1.medium",
+        "coreInstanceCount": "1",
+        "releaseLabel": "emr-4.4.0",
+        "id": "EmrClusterId_STeGP",
+        "type": "EmrCluster"
+      }
+    ],
+    "parameters": []
+  }

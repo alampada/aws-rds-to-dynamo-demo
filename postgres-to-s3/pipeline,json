@@ -1,0 +1,62 @@
+{
+  "objects": [
+    {
+      "resourceRole": "DataPipelineDefaultResourceRole",
+      "role": "DataPipelineDefaultRole",
+      "instanceType": "t2.micro",
+      "name": "DefaultResource2",
+      "securityGroups": "{REPLACE_SECURITY_GROUP}",
+      "id": "ResourceId_y92ab",
+      "type": "Ec2Resource"
+    },
+    {
+      "directoryPath": "s3://{REPLACE_BUCKET_NAME_AND_PATH_FOR_OUTPUT}",
+      "name": "S3OutputNode",
+      "id": "S3DataNodeId_hau8e",
+      "type": "S3DataNode"
+    },
+    {
+      "failureAndRerunMode": "CASCADE",
+      "resourceRole": "DataPipelineDefaultResourceRole",
+      "role": "DataPipelineDefaultRole",
+      "pipelineLogUri": "s3://{REPLACE_BUCKET_NAME_AND_PATH_FOR_LOGS}",
+      "scheduleType": "ONDEMAND",
+      "name": "Default",
+      "id": "Default"
+    },
+    {
+      "databaseName": "{REPLACE_PG_DATABASE_NAME}",
+      "*password": "{REPLACE_PG_PASSWORD}",
+      "name": "PGDatabase",
+      "id": "DatabaseId_8Ypea",
+      "type": "RdsDatabase",
+      "rdsInstanceId": "{REPLACE_PG_INSTANCE_ID}",
+      "username": "{REPLACE_PG_DATABASE_USERNAME}"
+    },
+    {
+      "output": {
+        "ref": "S3DataNodeId_hau8e"
+      },
+      "input": {
+        "ref": "SqlDataNodeId_2t2vp"
+      },
+      "name": "DefaultCopyActivity2",
+      "id": "CopyActivityId_8C4kN",
+      "runsOn": {
+        "ref": "ResourceId_y92ab"
+      },
+      "type": "CopyActivity"
+    },
+    {
+      "database": {
+        "ref": "DatabaseId_8Ypea"
+      },
+      "name": "DefaultSqlDataNode2",
+      "id": "SqlDataNodeId_2t2vp",
+      "type": "SqlDataNode",
+      "table": "employee",
+      "selectQuery": "select e.id, e.name, d.name from employee e join department d on e.department_id = d.id;"
+    }
+  ],
+  "parameters": []
+}
