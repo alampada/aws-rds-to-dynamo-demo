@@ -31,8 +31,8 @@ Prerequisites:
 postgres-to-S3:
 * Edit the json definition under `postgres-to-s3`. Things to look out for:
 
-** Replace the bucket name, database url and credentials with appropriate values as created in the previous steps. (search for REPLACE in the json file).
-** The EC2 resource needs to be able to reach the database, create the appropriate security group and replace the name in the json.
+    * Replace the bucket name, database url and credentials with appropriate values as created in the previous steps. (search for REPLACE in the json file).
+    * The EC2 resource needs to be able to reach the database, create the appropriate security group and replace the name in the json.
 
 * Create the pipeline and run it.
 
